@@ -74,19 +74,31 @@ public abstract class Persistence {
      *
      * @param alias
      */
-    public static void get(String alias) {
+    public static Persistence get(String alias) {
         try {
-            // obtemos a classe do persistência basenado-se nas configurações de {alias}
-            Class persistenceClass = (Class) Persistence.param(alias, "persistence");
-            // criamos a instância da persistência
-            Persistence persistence = (Persistence) persistenceClass.getDeclaredConstructor(String.class).newInstance(alias);
+            Persistence persistenceExisted = (Persistence) Persistence.param(alias, "instance");
+
+            // verificamos se a instancia da persistência ainda não foi criada
+            if (persistenceExisted == null) {
+
+                // obtemos a classe do persistência basenado-se nas configurações de {alias}
+                Class persistenceClass = (Class) Persistence.param(alias, "persistence");
+
+                // criamos a instância da persistência
+                Persistence persistence = (Persistence) persistenceClass.getDeclaredConstructor(String.class).newInstance(alias);
+
+                // agora devemos salvar a instancia no indice do Alias de configuração,
+                // para mostrará que essa conexão já foi instanciada.
+                EncoderApp.persistence.get(alias).data.put("instance", persistence);
+                return persistence;
+            }
+
+            return persistenceExisted;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-//        Config config = EncoderApp.persistence.get(alias);
-//        return (Persistence) config.get("instance");
+        return null;
     }
 
     /**

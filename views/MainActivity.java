@@ -9,6 +9,8 @@ import com.example.lucian.sqlite.encoder.Utils;
 import com.example.lucian.sqlite.encoder.persistence.Persistence;
 import com.example.lucian.sqlite.encoder.persistence.SQLite;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -19,14 +21,26 @@ public class MainActivity extends AppCompatActivity {
 
         EncoderApp.start(getBaseContext());
 
-        SQLite sqlite = new SQLite("EncoderSQLite");
+        Persistence.get("EncoderSQLite");
+        Persistence.get("EncoderSQLite");
+        Persistence.get("EncoderSQLite");
+
+//        SQLite sqlite = new SQLite("EncoderSQLite");
 
 //        Utils.log(Persistence.class.getName());
-//
-//        Persistence.get("EncoderSQLite");
+
+        for (Map<String, String> record : Persistence.get("EncoderSQLite").all("events")) {
+            // apresentamos os dados de todas as colunas
+            for (String column : record.keySet())
+                Utils.log(column + ": " + record.get(column));
+
+            Utils.log("—");
+        }
+
+
+        Utils.log("ok");
 //
 //        Utils.log(": " + ((String) Persistence.param("EncoderSQLite", "instance")));
-
 
 
 //        SQLite sqlite = new SQLite("sqlite-alias");
@@ -50,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 //                Encoder.log(column + ": " + record.get(column));
 //            Encoder.log("—");
 //        }
-
 
 
 //        // salvando mdelos

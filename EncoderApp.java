@@ -30,7 +30,7 @@ public class EncoderApp {
         put("EncoderSQLite", new Config() {{
             set("persistence", SQLite.class);
             set("name", "encoder-sqlite-db");
-            set("version", "1");
+            set("version", "5");
 
             set("SQLToCreate",
                     "CREATE TABLE phone_numbers ( id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), number TEXT);\n" +

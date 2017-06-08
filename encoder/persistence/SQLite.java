@@ -1,6 +1,7 @@
 package com.example.lucian.sqlite.encoder.persistence;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -40,8 +41,6 @@ public class SQLite extends Persistence {
             (String) Persistence.param(alias, "SQLToCreate"),
             (String) Persistence.param(alias, "SQLToUpgrade")
         );
-
-        Utils.log("ok");
     }
 
     /**
@@ -79,8 +78,6 @@ public class SQLite extends Persistence {
 
     @Override
     public boolean drop() {
-
-
         if (exists())
             return EncoderApp.context.deleteDatabase((String) config.get("name"));
 
@@ -99,7 +96,15 @@ public class SQLite extends Persistence {
 
     @Override
     public ArrayList<HashMap<String, String>> find(String table, HashMap<String, Object> options) {
-        return null;
+        SQLiteDatabase db = driver.getReadableDatabase();
+        Cursor c = db.query(
+                table,
+                (String[]) options.get("columns"),
+                (String) options.get("where"),
+                (String[]) options.get("params"),
+                null, null, null);
+
+        return Utils.cursorToAssociatedList(c);
     }
 
     @Override
