@@ -6,6 +6,6 @@ package com.example.lucian.sqlite.models;
 
 public class PhoneNumber {
 
-    public static String persistence = "OLD_SQLite";
+    public static String persistence = "EncoderSQLite";
     public String table = "phone_numbers";
 }

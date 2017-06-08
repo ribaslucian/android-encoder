@@ -1,5 +1,6 @@
 package com.example.lucian.sqlite.encoder.persistence;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -86,7 +87,9 @@ public class SQLite extends Persistence {
 
     @Override
     public void clear(String table) {
-
+        SQLiteDatabase adapter = driver.getWritableDatabase();
+        adapter.execSQL("DROP TABLE IF EXISTS " + table + ";");
+        adapter.close();
     }
 
     @Override
@@ -109,7 +112,15 @@ public class SQLite extends Persistence {
 
     @Override
     public int update(String table, HashMap<String, Object> options) {
-        return 0;
+        SQLiteDatabase db = driver.getWritableDatabase();
+        ContentValues values = Utils.mapToContentValues((HashMap<String, String>) options.get("values"));
+        int r = db.update(table,
+                values,
+                (String) options.get("where"),
+                (String[]) options.get("params"));
+
+        db.close();
+        return r;
     }
 
     @Override
