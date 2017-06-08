@@ -22,6 +22,13 @@ public class EncoderApp {
     public static final String LOG_NAME = "Encoder-Log";
 
     /**
+     * Instancia do contexto principal da aplicação.
+     *
+     * @type Context
+     */
+    public static Context context;
+
+    /**
      * Configurações das conexões com bancos de dados (persistências).
      * Verificar documentação em: encoder.Persistence.config
      *
@@ -42,19 +49,24 @@ public class EncoderApp {
                 add("DROP TABLE IF EXISTS phone_numbers;");
                 add("DROP TABLE IF EXISTS events;");
             }});
+        }});
 
-            // Aqui a instância da classe de persistência respectiva deve
-            // armazenada, contendo as propriedades devinas nessa configuração.
-            // set("instance", new OLD_SQLite());
+        put("SQLiteAux", new Config() {{
+            set("persistence", SQLite.class);
+            set("name", "encoder-sqlite-auxiliar-db");
+            set("version", 1);
+
+            set("sqlToCreate", new ArrayList<String>() {{
+                add("CREATE TABLE phone_numbers (id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), number TEXT);");
+                add("CREATE TABLE events (id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), date VARCHAR(32), description TEXT);");
+            }});
+
+            set("sqlToUpgrade", new ArrayList<String>() {{
+                add("DROP TABLE IF EXISTS phone_numbers;");
+                add("DROP TABLE IF EXISTS events;");
+            }});
         }});
     }};
-
-    /**
-     * Instancia do contexto principal da aplicação.
-     *
-     * @type Context
-     */
-    public static Context context;
 
     /**
      * Inicia uma aplicação utilizando a biblioteca

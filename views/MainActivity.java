@@ -1,5 +1,6 @@
 package com.example.lucian.sqlite.views;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -10,6 +11,7 @@ import com.example.lucian.sqlite.encoder.Utils;
 import com.example.lucian.sqlite.encoder.persistence.Persistence;
 import com.example.lucian.sqlite.encoder.persistence.SQLite;
 import com.example.lucian.sqlite.models.Event;
+import com.example.lucian.sqlite.services.NotificationService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
         super.setTitle(R.string.app_name);
         setContentView(R.layout.activity_main);
         EncoderApp.start(getBaseContext());
+
+        Intent serviceIntent = new Intent(this, NotificationService.class);
+
+        startService(serviceIntent);
 
 
 
