@@ -53,19 +53,11 @@ public abstract class Persistence {
     public String alias;
 
     /**
-     * Configurações salvas no alias da conexões em questão.
-     *
-     * @type Config
-     */
-    public Config config;
-
-    /**
      * Todo construtor de persistência deverá possui seu apelido informado.
      * @param alias String
      */
     public Persistence(String alias) {
         this.alias = alias;
-        config = EncoderApp.persistence.get(alias);
     }
 
     /**

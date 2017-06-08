@@ -12,17 +12,17 @@ import com.example.lucian.sqlite.encoder.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 /**
  * Criado por Lucian Rossoni Ribas <ribas.lucian@gmail.com> em 08/06/2017.
  * Classe de persistência de dados SQlite.
- *
+ * <p>
  * Documentação em: encoder.persistence.Persistence
  */
 public class SQLite extends Persistence {
 
     /**
      * Instancia do driver do SQLite.
+     *
      * @type private driver SQLiteOpenHelper
      */
     public SQLiteOpenHelper driver;
@@ -35,52 +35,53 @@ public class SQLite extends Persistence {
     public SQLite(String alias) {
         super(alias);
 
-        driver = new Driver(
-            EncoderApp.context,
-            (String) Persistence.param(alias, "name"),
-            Integer.parseInt((String) Persistence.param(alias, "version")),
-            (String) Persistence.param(alias, "SQLToCreate"),
-            (String) Persistence.param(alias, "SQLToUpgrade")
-        );
+        if (driver == null) {
+            driver = new Driver(alias);
+        }
     }
 
     /**
      * Criamos uma classe privada para armazenar o
      * driver do OLD_SQLite e passar as propriedades específicas.
      */
-    private class Driver extends SQLiteOpenHelper {
+    protected class Driver extends SQLiteOpenHelper {
 
-        public String sqlToCreate;
-        public String sqlToUpgrade;
+        public String alias;
 
-        public Driver(Context context, String databaseName, int version, String sqlToCreate, String sqlToUpgrade) {
-            super(context, databaseName, null, version);
-            this.sqlToCreate = sqlToCreate;
-            this.sqlToUpgrade = sqlToUpgrade;
+        public Driver(String alias) {
+            super(EncoderApp.context, (String) Persistence.param(alias, "name"), null, (int) Persistence.param(alias, "version"));
+            this.alias = alias;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(sqlToCreate);
+            Utils.log("Persistence '" + alias + "' Create in version " + Persistence.param(alias, "version") + ":\n");
+            for (String sql: (ArrayList<String>) Persistence.param(alias, "sqlToCreate")) {
+                Utils.log("\t" + sql + "\n");
+                db.execSQL(sql);
+            }
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Utils.log("Upgrading Database from:" + oldVersion + " to: " + newVersion + " — which will destroy all old data.");
-            db.execSQL(sqlToUpgrade);
+            Utils.log("Persistence '" + alias + "' Upgrade in " + oldVersion + "->" + newVersion  + ":\n");
+            for (String sql: (ArrayList<String>) Persistence.param(alias, "sqlToUpgrade")) {
+                Utils.log("\t" + sql + "\n");
+                db.execSQL(sql);
+            }
             onCreate(db);
         }
     }
 
     @Override
     public boolean exists() {
-        return EncoderApp.context.getDatabasePath((String) config.get("name")).exists();
+        return EncoderApp.context.getDatabasePath((String) Persistence.param(alias, "name")).exists();
     }
 
     @Override
     public boolean drop() {
         if (exists())
-            return EncoderApp.context.deleteDatabase((String) config.get("name"));
+            return EncoderApp.context.deleteDatabase((String) Persistence.param(alias, "name"));
 
         return true;
     }
@@ -94,7 +95,9 @@ public class SQLite extends Persistence {
 
     @Override
     public long insert(String table, HashMap<String, String> columnValues) {
-        return 0;
+        long r =  driver.getWritableDatabase().insert(table, null, Utils.mapToContentValues(columnValues));
+        driver.close();
+        return r;
     }
 
     @Override

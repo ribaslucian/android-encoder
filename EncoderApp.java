@@ -6,6 +6,7 @@ import com.example.lucian.sqlite.encoder.Config;
 import com.example.lucian.sqlite.encoder.Utils;
 import com.example.lucian.sqlite.encoder.persistence.SQLite;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,22 +28,24 @@ public class EncoderApp {
      * @type HashMap<String, Config>
      */
     public static HashMap<String, Config> persistence = new HashMap(){{
-        put("EncoderSQLite", new Config() {{
+        put("default", new Config() {{
             set("persistence", SQLite.class);
             set("name", "encoder-sqlite-db");
-            set("version", "5");
+            set("version", 3);
 
-            set("SQLToCreate",
-                    "CREATE TABLE phone_numbers ( id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), number TEXT);\n" +
-                    "CREATE TABLE events ( id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), date VARCHAR(32), description TEXT);");
+            set("sqlToCreate", new ArrayList<String>() {{
+                add("CREATE TABLE phone_numbers (id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), number TEXT);");
+                add("CREATE TABLE events (id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT 1, name VARCHAR(255), date VARCHAR(32), description TEXT);");
+            }});
 
-            set("SQLToUpgrade",
-                    "DROP TABLE IF EXISTS phone_numbers;\n" +
-                    "DROP TABLE IF EXISTS events;");
+            set("sqlToUpgrade", new ArrayList<String>() {{
+                add("DROP TABLE IF EXISTS phone_numbers;");
+                add("DROP TABLE IF EXISTS events;");
+            }});
 
             // Aqui a instância da classe de persistência respectiva deve
             // armazenada, contendo as propriedades devinas nessa configuração.
-            // set("intance", new OLD_SQLite());
+            // set("instance", new OLD_SQLite());
         }});
     }};
 
