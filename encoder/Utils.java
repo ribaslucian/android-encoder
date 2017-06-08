@@ -1,62 +1,51 @@
 package com.example.lucian.sqlite.encoder;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.example.lucian.sqlite.EncoderApp;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by Lucian on 11/05/2017.
+ * Created by Lucian on 08/06/2017.
  */
 
-/*
-// iniciamos os recursos da biblioteca Encoder.
-    Encoder.start(getBaseContext());
-*/
-public abstract class Encoder {
+public class Utils {
 
-    public static final String LOG_NAME = "Encoder-Log";
-    public static final String DATABASE_NAME = "encoder-sqlite-db";
-    public static final int DATABASE_VERSION = 5;
+    /**
+     * Contato do debug do método debug().
+     *
+     * @type Integer
+     */
     public static Integer DEBUG = 0;
 
-    private static HashMap<String, Object> warehouse;
-    public static Context context;
-    public static SQLite database;
-
-    public static void start(Context context) {
-        Encoder.log("*— START Encoder");
-        Encoder.context = context;
-        Encoder.database = new SQLite(context);
-    }
-
-    public static void end() {
-        database.close();
-    }
-
-    public static void set(String name, Object obj) {
-        warehouse.put(name, obj);
-    }
-
-    public static Object get(String name) {
-        return warehouse.get(name);
-    }
-
+    /**
+     * Apresenta um log personalizado para a aplicação atual.
+     * @param text String
+     */
     public static void log(String text) {
-        Log.i(Encoder.LOG_NAME, text);
+        Log.i(EncoderApp.LOG_NAME, text);
     }
 
+    /**
+     * Efetua o debug (printa no AndroidMonitor) baseado num contador de chamada; basta
+     * chamar o método para iniciar a contagem, para cada contagem o contador somará 1.
+     *
+     * @reurn void
+     */
     public static void DEBUG() {
         DEBUG++;
         log("DEBUG " + DEBUG.toString());
     }
 
+    /**
+     * Gera uma String aleatória.
+     * @return String hash
+     */
     public static String rand() {
         return UUID.randomUUID().toString();
     }
@@ -64,8 +53,8 @@ public abstract class Encoder {
     /**
      * Converte um resultado Cursor para uma lista associativa e registros.
      *
-     * @param cursor
-     * @return
+     * @param cursor Cursor
+     * @return ArrayList<HashMap<String, String>>
      */
     public static ArrayList<HashMap<String, String>> cursorToAssociatedList(Cursor cursor) {
         int count = cursor.getCount();
@@ -97,10 +86,10 @@ public abstract class Encoder {
     }
 
     /**
-     * Converte um Map para um ContentValues.
+     * Converte um objeto Map para um objeto ContentValues.
      *
-     * @param map
-     * @return
+     * @param map HashMap<String, String>
+     * @return ContentValues
      */
     public static ContentValues mapToContentValues(HashMap<String, String> map) {
         ContentValues resources = new ContentValues();
@@ -110,5 +99,4 @@ public abstract class Encoder {
 
         return resources;
     }
-
 }
